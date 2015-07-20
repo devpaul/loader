@@ -7,9 +7,9 @@ import pollUntil = require('intern/dojo/node!leadfoot/helpers/pollUntil');
 
 function executeTest(suite: Suite, htmlTestPath: string, testFn: (result: any) => void, timeout = 5000): Command<any> {
 	return suite.remote
-		.get((<any>require).toUrl(htmlTestPath))
+		.get((<any> require).toUrl(htmlTestPath))
 		.then(pollUntil<any>(function () {
-			return (<any>window).loaderTestResults;
+			return (<any> window).loaderTestResults;
 		}, null, timeout), undefined)
 		.then(testFn, function () {
 			throw new Error('loaderTestResult was not set.');
@@ -87,7 +87,7 @@ registerSuite({
 
 	'AMD module with circular dependency'() {
 		const expected = {
-			default: 'circular2',
+			'default': 'circular2',
 			message: 'circular1.getMessage'
 		};
 
@@ -98,7 +98,7 @@ registerSuite({
 
 	'AMD module with circular dependency 2'() {
 		const expected = {
-			default: 'circular2',
+			'default': 'circular2',
 			message: 'circular1.getMessage'
 		};
 

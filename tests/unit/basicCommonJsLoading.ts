@@ -154,7 +154,7 @@ registerSuite({
 			require([
 				'commonJs/app1'
 			], dfd.callback(function (app1: any) {
-				assert.strictEqual(app1.getMessage(), 'testModule1', 'Test module and dependency should load');
+				assert.strictEqual(app1.getMessage(), expected.testModule1Value, 'Test module and dependency should load');
 			}));
 		});
 	},
@@ -168,7 +168,7 @@ registerSuite({
 			'commonJs/circular1'
 		], dfd.callback(function (circular1: any) {
 			assert.strictEqual(circular1.getMessage(), 'circular1', 'Circular dependency should be resolved');
-			assert.strictEqual(circular1.circular2Message(), 'circular2', 'Circular dependency should be resolved')
+			assert.strictEqual(circular1.circular2Message(), 'circular2', 'Circular dependency should be resolved');
 		}));
 	},
 
@@ -181,7 +181,7 @@ registerSuite({
 			'commonJs/circular2'
 		], dfd.callback(function (circular2: any) {
 			assert.strictEqual(circular2.getMessage(), 'circular2', 'Circular dependency should be resolved');
-			assert.strictEqual(circular2.circular1Message(), 'circular1', 'Circular dependency should be resolved')
+			assert.strictEqual(circular2.circular1Message(), 'circular1', 'Circular dependency should be resolved');
 		}));
 	},
 
@@ -195,9 +195,9 @@ registerSuite({
 			'commonJs/circular2'
 		], dfd.callback(function (circular1: any, circular2: any) {
 			assert.strictEqual(circular1.getMessage(), 'circular1', 'Circular dependency should be resolved');
-			assert.strictEqual(circular1.circular2Message(), 'circular2', 'Circular dependency should be resolved')
+			assert.strictEqual(circular1.circular2Message(), 'circular2', 'Circular dependency should be resolved');
 			assert.strictEqual(circular2.getMessage(), 'circular2', 'Circular dependency should be resolved');
-			assert.strictEqual(circular2.circular1Message(), 'circular1', 'Circular dependency should be resolved')
+			assert.strictEqual(circular2.circular1Message(), 'circular1', 'Circular dependency should be resolved');
 		}));
 	},
 

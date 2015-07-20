@@ -845,7 +845,7 @@ export interface RootRequire extends Require {
 			let oldDefine = define;
 			let result: any;
 
-			if(module._findPath && module._nodeModulePaths){
+			if (module._findPath && module._nodeModulePaths) {
 				let localModulePath = module._findPath(mid, module._nodeModulePaths(toUrl('.', parent)));
 
 				if (localModulePath !== false) {
@@ -1051,7 +1051,7 @@ export interface RootRequire extends Require {
 						newModule.executed = true;
 						newModule.result = module.exports;
 					}
-				}
+				};
 			}
 			else if (/* define(value) */ !Array.isArray(deps)) {
 				const value: any = deps;
