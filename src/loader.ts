@@ -7,7 +7,7 @@ export interface Config {
 	baseUrl?: string;
 	map?: ModuleMap;
 	packages?: Package[];
-	paths?: { [path: string]: string; };
+	paths?: { [ path: string ]: string; };
 }
 
 export interface Define {
@@ -23,7 +23,8 @@ export interface Factory {
 
 export interface Has {
 	(name: string): any;
-	add(name: string, value: (global: Window, document?: HTMLDocument, element?: HTMLDivElement) => any, now?: boolean, force?: boolean): void;
+	add(name: string, value: (global: Window, document?: HTMLDocument, element?: HTMLDivElement) => any,
+		now?: boolean, force?: boolean): void;
 	add(name: string, value: any, now?: boolean, force?: boolean): void;
 }
 
@@ -136,11 +137,12 @@ export interface RootRequire extends Require {
 
 	// hash: (mid | url)-->(function | string)
 	//
-	// A cache of resources. The resources arrive via a require.cache application, which takes a hash from either mid --> function or
-	// url --> string. The function associated with mid keys causes the same code to execute as if the module was script injected.
+	// A cache of resources. The resources arrive via a require.cache application, which takes a hash from either
+	// mid --> function or url --> string. The function associated with mid keys causes the same code to execute as if
+	// the module was script injected.
 	//
-	// Both kinds of key-value pairs are entered into cache via the function consumePendingCache, which may relocate keys as given
-	// by any mappings *iff* the cache was received as part of a module resource request.
+	// Both kinds of key-value pairs are entered into cache via the function consumePendingCache, which may relocate
+	// keys as given by any mappings *iff* the cache was received as part of a module resource request.
 	let cache: { [moduleId: string]: any; } = {};
 
 	let checkCompleteGuard: number = 0;
@@ -163,11 +165,14 @@ export interface RootRequire extends Require {
 
 	// A hash: (mid) --> (module-object) the module namespace
 	//
-	// pid: the package identifier to which the module belongs (e.g., "dojo"); "" indicates the system or default package
-	// mid: the fully-resolved (i.e., mappings have been applied) module identifier without the package identifier (e.g., "dojo/io/script")
+	// pid: the package identifier to which the module belongs (e.g., "dojo"); "" indicates the system or default
+	// 	package
+	// mid: the fully-resolved (i.e., mappings have been applied) module identifier without the package identifier
+	// 	(e.g., "dojo/io/script")
 	// url: the URL from which the module was retrieved
 	// pack: the package object of the package to which the module belongs
-	// executed: false => not executed; EXECUTING => in the process of tranversing deps and running factory; true => factory has been executed
+	// executed: false => not executed; EXECUTING => in the process of tranversing deps and running factory;
+	// 	true => factory has been executed
 	// deps: the dependency array for this module (array of modules objects)
 	// def: the factory for this module
 	// result: the result of the running the factory for this module
@@ -179,7 +184,8 @@ export interface RootRequire extends Require {
 	// 1. Requested: some other module's definition or a require application contained the requested module in
 	//    its dependency array
 	//
-	// 2. Injected: a script element has been appended to the insert-point element demanding the resource implied by the URL
+	// 2. Injected: a script element has been appended to the insert-point element demanding the resource implied by
+	//    the URL
 	//
 	// 3. Loaded: the resource injected in [2] has been evaluated.
 	//
@@ -198,9 +204,9 @@ export interface RootRequire extends Require {
 	// hash: (mid | url)-->(function | string)
 	//
 	// Gives a set of cache modules pending entry into cache. When cached modules are published to the loader, they are
-	// entered into pendingCacheInsert; modules are then pressed into cache upon (1) AMD define or (2) upon receiving another
-	// independent set of cached modules. (1) is the usual case, and this case allows normalizing mids given in the pending
-	// cache for the local configuration, possibly relocating modules.
+	// entered into pendingCacheInsert; modules are then pressed into cache upon (1) AMD define or (2) upon receiving
+	// another independent set of cached modules. (1) is the usual case, and this case allows normalizing mids given
+	// in the pending cache for the local configuration, possibly relocating modules.
 	let pendingCacheInsert: { [moduleId: string]: any; } = {};
 
 	let setGlobals: (require: Require, define: Define) => void;
@@ -217,7 +223,8 @@ export interface RootRequire extends Require {
 		const element: HTMLDivElement = document && document.createElement('div');
 
 		const has: Has = <Has> function(name: string): any {
-			return typeof hasCache[name] === 'function' ? (hasCache[name] = hasCache[name](global, document, element)) : hasCache[name];
+			return typeof hasCache[name] === 'function' ?
+				(hasCache[name] = hasCache[name](global, document, element)) : hasCache[name];
 		};
 
 		has.add = function (name: string, test: any, now: boolean, force: boolean): void {
@@ -228,7 +235,8 @@ export interface RootRequire extends Require {
 		return has;
 	})();
 
-	const req: RootRequire = <RootRequire> function (config: any, dependencies?: any, callback?: RequireCallback): Module {
+	const req: RootRequire =
+		<RootRequire> function (config: any, dependencies?: any, callback?: RequireCallback): Module {
 		if (/* require([], cb) */ Array.isArray(config) || /* require(mid) */ typeof config === 'string') {
 			callback = <RequireCallback> dependencies;
 			dependencies = <string[]> config;
@@ -336,6 +344,8 @@ export interface RootRequire extends Require {
 
 			mix(map, config.map);
 
+			// FIXME this is a down-cast. mapProgs: Array<MapSource>; computeMapProg => Array<MapItem>;
+			// MapSource extends MapItem
 			mapProgs = computeMapProg(map);
 
 			// Note that old paths will get destroyed if reconfigured
@@ -360,7 +370,9 @@ export interface RootRequire extends Require {
 		for (let key in pendingCacheInsert) {
 			item = pendingCacheInsert[key];
 
-			cache[typeof item === 'string' ? toUrl(key, referenceModule) : getModuleInfo(key, referenceModule).mid] = item;
+			cache[
+				typeof item === 'string' ? toUrl(key, referenceModule) : getModuleInfo(key, referenceModule).mid
+			] = item;
 		}
 
 		pendingCacheInsert = {};
@@ -539,7 +551,8 @@ export interface RootRequire extends Require {
 				mid = (plugin.mid + '!' + (plugin.dynamic ? ++uidGenerator + '!' : '') + prid);
 			}
 			else {
-				// if the plugin has not been loaded, then can't resolve the prid and must assume this plugin is dynamic until we find out otherwise
+				// if the plugin has not been loaded, then can't resolve the prid and must assume this plugin is dynamic
+				// until we find out otherwise
 				prid = match[2];
 				mid = plugin.mid + '!' + (++uidGenerator) + '!*';
 			}
@@ -565,7 +578,8 @@ export interface RootRequire extends Require {
 		const moduleInfo: Module = getModuleInfo(name + '/x', referenceModule);
 		const url: string = moduleInfo.url;
 
-		// "/x.js" since getModuleInfo automatically appends ".js" and we appended "/x" to make name look like a module id
+		// "/x.js" since getModuleInfo automatically appends ".js" and we appended "/x" to make name look like a
+		// module id
 		return url.slice(0, url.length - 5);
 	}
 
@@ -658,8 +672,10 @@ export interface RootRequire extends Require {
 			// for plugins, resolve the loadQ
 			forEach(module.loadQ, function (pseudoPluginResource: Module): void {
 				// manufacture and insert the real module in modules
-				const prid: string = resolvePluginResourceId(module, pseudoPluginResource.prid, pseudoPluginResource.req);
-				const mid: string = module.dynamic ? pseudoPluginResource.mid.replace(/\*$/, prid) : (module.mid + '!' + prid);
+				const prid: string = resolvePluginResourceId(module, pseudoPluginResource.prid,
+					pseudoPluginResource.req);
+				const mid: string = module.dynamic ?
+					pseudoPluginResource.mid.replace(/\*$/, prid) : (module.mid + '!' + prid);
 				const pluginResource: Module = <Module> mix(mix({}, pseudoPluginResource), { mid: mid, prid: prid });
 
 				if (!modules[mid]) {
@@ -667,9 +683,9 @@ export interface RootRequire extends Require {
 					injectPlugin((modules[mid] = pluginResource));
 				} // else this was a duplicate request for the same (plugin, rid) for a nondynamic plugin
 
-				// pluginResource is really just a placeholder with the wrong mid (because we couldn't calculate it until the plugin was on board)
-				// fix() replaces the pseudo module in a resolved deps array with the real module
-				// lastly, mark the pseudo module as arrived and delete it from modules
+				// pluginResource is really just a placeholder with the wrong mid (because we couldn't calculate it
+				// until the plugin was on board) fix() replaces the pseudo module in a resolved deps array with the
+				// real module lastly, mark the pseudo module as arrived and delete it from modules
 				pseudoPluginResource.fix(modules[mid]);
 				--waitingCount;
 				modules[pseudoPluginResource.mid] = undefined;
@@ -863,7 +879,8 @@ export interface RootRequire extends Require {
 			}
 			catch (error) {
 				// If the Node.js 'require' function cannot locate a module it will throw "Error: Cannot find module"
-				// Leave it to the caller of this function to handle a non-existent module (and throw an error if desired)
+				// Leave it to the caller of this function to handle a non-existent module
+				// (and throw an error if desired)
 				result = undefined;
 			}
 			finally {
@@ -878,14 +895,16 @@ export interface RootRequire extends Require {
 
 		// retain the ability to get node's require
 		req.nodeRequire = require;
-		injectUrl = function (url: string, callback: (node?: HTMLScriptElement) => void, module: Module, parent?: Module): void {
+		injectUrl = function (url: string, callback: (node?: HTMLScriptElement) => void,
+							  module: Module, parent?: Module): void {
 			fs.readFile(url, 'utf8', function (error: Error, data: string): void {
 				if (error) {
 					function loadCallback () {
 						let result = nodeLoadModule(module.mid, parent);
 
 						if (!result) {
-							throw new Error('Failed to load module ' + module.mid + ' from ' + url + (parent ? ' (parent: ' + parent.mid + ')' : ''));
+							let parentMid = (parent ? ' (parent: ' + parent.mid + ')' : '');
+							throw new Error('Failed to load module ' + module.mid + ' from ' + url + parentMid);
 						}
 
 						return result;
@@ -894,10 +913,10 @@ export interface RootRequire extends Require {
 					defArgs = [ [], loadCallback ];
 				}
 				else {
-					// global `module` variable needs to be shadowed for UMD modules that are loaded in an Electron webview;
-					// in Node.js the `module` variable does not exist when using `vm.runInThisContext`, but in Electron it
-					// exists in the webview when Node.js integration is enabled which causes loaded modules to register
-					// with Node.js and break the loader
+					// global `module` variable needs to be shadowed for UMD modules that are loaded in an Electron
+					// webview; in Node.js the `module` variable does not exist when using `vm.runInThisContext`,
+					// but in Electron it exists in the webview when Node.js integration is enabled which causes loaded
+					// modules to register with Node.js and break the loader
 					var oldModule = this.module;
 					this.module = undefined;
 					try {
@@ -918,7 +937,8 @@ export interface RootRequire extends Require {
 		};
 	}
 	else if (has('host-browser')) {
-		injectUrl = function (url: string, callback: (node?: HTMLScriptElement) => void, module: Module, parent?: Module): void {
+		injectUrl = function (url: string, callback: (node?: HTMLScriptElement) => void, module: Module,
+							  parent?: Module): void {
 			// insert a script element to the insert-point element with src=url;
 			// apply callback upon detecting the script has loaded.
 			const node: HTMLScriptElement = document.createElement('script');
@@ -929,7 +949,8 @@ export interface RootRequire extends Require {
 					has('loader-ie9-compat') ? callback(node) : callback();
 				}
 				else {
-					throw new Error('Failed to load module ' + module.mid + ' from ' + url + (parent ? ' (parent: ' + parent.mid + ')' : ''));
+					let parentMid = (parent ? ' (parent: ' + parent.mid + ')' : '');
+					throw new Error('Failed to load module ' + module.mid + ' from ' + url + parentMid);
 				}
 			};
 
@@ -1063,7 +1084,9 @@ export interface RootRequire extends Require {
 		}
 
 		if (has('loader-ie9-compat')) {
-			for (var i = document.scripts.length - 1, script: HTMLScriptElement; (script = <HTMLScriptElement> document.scripts[i]); --i) {
+			for (var i = document.scripts.length - 1, script: HTMLScriptElement;
+				 script = <HTMLScriptElement> document.scripts[i];
+				 --i) {
 				if ((<any> script).readyState === 'interactive') {
 					(<any> script).defArgs = [ deps, factory ];
 					break;
